@@ -1,0 +1,138 @@
+// Bu dosya, veritabanı ilk kez çalıştırıldığında (tablo boşsa) kullanılacak
+// başlangıç verilerini içerir. Uygulama çalışırken yapılan tüm ekleme,
+// düzenleme ve silme işlemleri artık bu dosyada değil, veritabanında saklanır.
+
+const DEFAULT_PARAMS = {
+    tahsisTipi: ["MÜDÜR", "YÖNETİCİ", "UZMAN", "HAVUZ ARACI"],
+    filo: ["GARANTİ FİLO", "HEDEF FİLO", "INTERCITY", "AVIS FİLO"],
+    bolum: ["PROJE SATIŞ", "KALİTE", "ÜRETİM", "AR-GE", "SATIN ALMA"],
+    yakitFirmasi: ["OPET", "SHELL", "TOTAL", "BP"],
+    havuzTipi: ["TEK BAŞINA", "HAVUZ 1", "HAVUZ 2", "HAVUZ 3"],
+    kullanimSuresi: ["12 Ay", "24 Ay", "36 Ay", "48 Ay"],
+    degisimNedeni: ["YAZLIK GEÇİŞİ", "KIŞLIK GEÇİŞİ", "DİŞ DERİNLİĞİ AŞINMASI", "YARILMA / HASAR"],
+    lastikMarka: ["MICHELIN PILOT SPORT", "BRIDGESTONE TURANZA", "GOODYEAR EFFICIENTGRIP", "CONTINENTAL PREMIUMCONTACT"],
+    hasarDetayi: ["ÖN TAMPON ÇARPMA", "YAN KAPI ÇİZİK", "CAM ÇATLAĞI", "PARK HALİNDE SÜRTME"],
+    servisNedeni: ["PERİYODİK BAKIM (15.000 KM)", "PERİYODİK BAKIM (30.000 KM)", "FREN BALATA DEĞİŞİMİ", "MEKANİK ARIZA ONARIMI"],
+    marka: ["SKODA", "VOLKSWAGEN", "RENAULT", "FORD", "TOYOTA", "BMW"],
+    model: ["OCTAVIA", "SUPERB", "PASSAT", "MEGANE", "FOCUS", "COROLLA"],
+    yakitTipi: ["DİZEL", "BENZİN", "HİBRİT", "ELEKTRİK"],
+    sanziman: ["OTOMATİK", "MANUEL"],
+    modelYili: ["2023", "2024", "2025", "2026"],
+    masrafYerleri: ["22101 KURUMSAL İLETİŞİM", "22103 SATIŞ ALTYAPI", "22104 SATIŞ ENDÜSTRİ", "22106 SATIŞ OEM", "22107 SATIŞ TİCARİ", "22108 SATIŞ DOMESTİK", "22109 İŞ VE ÜRÜN GELİŞTİRME", "22110 GR.STR.SALES&MARK."],
+    cezaTuru: ["HIZ İHLALİ", "PARK İHLALİ", "EMNİYET KEMERİ", "TRAFİK IŞIĞI İHLALİ", "DİĞER"],
+    // Marka bazlı periyodik bakım KM aralığı (örnek değerler)
+    bakimKmSinirlari: {
+        "SKODA": 15000,
+        "VOLKSWAGEN": 15000,
+        "RENAULT": 20000,
+        "FORD": 30000,
+        "TOYOTA": 20000,
+        "BMW": 20000
+    },
+    // Havuz bazlı toplam KM sınırı (filo kira sözleşmesi aşım riski).
+    // "TEK BAŞINA" için burada değer tanımlanmaz; o tip için araç bazlı
+    // "KM Sınırı" alanı kullanılır.
+    havuzKmSinirlari: {
+        "HAVUZ 1": 300000,
+        "HAVUZ 2": 300000,
+        "HAVUZ 3": 300000
+    }
+};
+
+const DEFAULT_CARS = [
+    {
+        id: 1,
+        plaka: "34GKG192",
+        marka: "SKODA",
+        model: "OCTAVIA PREMIUM 1.0 TSI",
+        filo: "GARANTİ FİLO",
+        kullanici: "ÖMER YÜKSEL",
+        bolum: "PROJE SATIŞ",
+        teslimTarihi: "2023-03-29",
+        donusTarihi: "2026-03-30",
+        kmSiniri: 105000,
+        kiraTutari: 2500,
+        yakitFirmasi: "OPET",
+        havuzTipi: "HAVUZ 1",
+        kullanimSuresi: "36 Ay",
+        durum: "Aktif",
+        yakitTipi: "BENZİN",
+        sanziman: "OTOMATİK",
+        modelYili: "2023",
+        masrafYeri: "22103 SATIŞ ALTYAPI",
+        kmListesi: [{tarih: "2026-03-01", km: 98000}],
+        lastikListesi: [{nedeni: "YAZLIK GEÇİŞİ", markaModel: "MICHELIN PILOT SPORT", tarih: "2025-04-10", km: 85000, aciklama: "YENİ LASTİK TAKILDI"}],
+        hasarListesi: [{tarih: "2024-05-12", detay: "ÖN TAMPON ÇARPMA", tutar: 4500, aciklama: "PLASTİK AKSAM BOYANDI", resimler: []}],
+        servisListesi: [{tarih: "2025-01-10", neden: "PERİYODİK BAKIM (30.000 KM)", km: 75000, tutar: 6200, aciklama: "YAĞ VE FİLTRELER DEĞİŞTİ", dosyalar: []}],
+        cezaListesi: [],
+        ruhsat: { tescilTarihi: "2023-03-29", belgeNo: "", resimler: [] },
+        sigorta: { sigortaTarihi: "", policeNo: "", bitisTarihi: "", dosyalar: [] },
+        muayene: { ilkTescilTarihi: "2023-03-29", muayeneTarihi: "" },
+        dosyalar: { zimmetFormu: [], taahhutname: [] },
+        tahsisGecmisi: []
+    },
+    {
+        id: 2,
+        plaka: "34EES595",
+        marka: "SKODA",
+        model: "OCTAVIA",
+        filo: "GARANTİ FİLO",
+        kullanici: "İSA YAMAN",
+        bolum: "KALİTE",
+        teslimTarihi: "2026-08-13",
+        donusTarihi: "2027-08-13",
+        kmSiniri: 60000,
+        kiraTutari: 2500,
+        yakitFirmasi: "OPET",
+        havuzTipi: "TEK BAŞINA",
+        kullanimSuresi: "12 Ay",
+        durum: "Aktif",
+        yakitTipi: "DİZEL",
+        sanziman: "OTOMATİK",
+        modelYili: "2024",
+        masrafYeri: "",
+        kmListesi: [{tarih: "2026-08-13", km: 12500}],
+        lastikListesi: [],
+        hasarListesi: [],
+        servisListesi: [],
+        cezaListesi: [],
+        ruhsat: { tescilTarihi: "", belgeNo: "", resimler: [] },
+        sigorta: { sigortaTarihi: "", policeNo: "", bitisTarihi: "", dosyalar: [] },
+        muayene: { ilkTescilTarihi: "", muayeneTarihi: "" },
+        dosyalar: { zimmetFormu: [], taahhutname: [] },
+        tahsisGecmisi: []
+    },
+    {
+        id: 3,
+        plaka: "34EES596",
+        marka: "SKODA",
+        model: "OCTAVIA",
+        filo: "GARANTİ FİLO",
+        kullanici: "YAMAN İSA",
+        bolum: "KALİTE",
+        teslimTarihi: "2026-08-14",
+        donusTarihi: "2026-08-14",
+        kmSiniri: 50000,
+        kiraTutari: 2500,
+        yakitFirmasi: "OPET",
+        havuzTipi: "HAVUZ 2",
+        kullanimSuresi: "12 Ay",
+        durum: "İade",
+        yakitTipi: "BENZİN",
+        sanziman: "MANUEL",
+        modelYili: "2023",
+        masrafYeri: "",
+        kmListesi: [{tarih: "2026-08-14", km: 49500}],
+        lastikListesi: [],
+        hasarListesi: [],
+        servisListesi: [],
+        cezaListesi: [],
+        ruhsat: { tescilTarihi: "", belgeNo: "", resimler: [] },
+        sigorta: { sigortaTarihi: "", policeNo: "", bitisTarihi: "", dosyalar: [] },
+        muayene: { ilkTescilTarihi: "", muayeneTarihi: "" },
+        dosyalar: { zimmetFormu: [], taahhutname: [] },
+        tahsisGecmisi: []
+    }
+];
+
+module.exports = { DEFAULT_PARAMS, DEFAULT_CARS };
