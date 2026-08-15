@@ -1161,11 +1161,11 @@ button:disabled{opacity:.5;cursor:not-allowed}
                     <td class="py-3 px-4 whitespace-nowrap"><span class="bg-gray-100 text-gray-700 px-2.5 py-1 rounded-md text-xs font-semibold">${car.filo || '-'}</span></td>
                     <td class="py-3 px-4 font-semibold text-gray-800 whitespace-nowrap">${car.kullanici || '-'}</td>
                     <td class="py-3 px-4 whitespace-nowrap"><span class="bg-gray-100 text-gray-700 px-2.5 py-1 rounded-md text-xs font-semibold">${car.bolum || '-'}</span></td>
-                    <td class="py-3 px-4 text-xs text-gray-500">Teslim: ${formatDateTR(car.teslimTarihi)}<br><span class="text-amber-600 font-medium">İade: ${formatDateTR(car.donusTarihi)}</span></td>
-                    <td class="py-3 px-4 text-xs">${kalanObj.text}</td>
-                    <td class="py-3 px-4 text-right">
-                        <button onclick="openCarDetail(${car.id})" class="bg-wilo text-white px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-wilo-dark transition shadow-sm flex items-center space-x-1.5 ml-auto">
-                            <i class="fa-solid fa-folder-open"></i><span>Detay & Yönet</span>
+                    <td class="py-3 px-4 text-xs text-gray-500 whitespace-nowrap">Teslim: ${formatDateTR(car.teslimTarihi)}<br><span class="text-amber-600 font-medium">İade: ${formatDateTR(car.donusTarihi)}</span></td>
+                    <td class="py-3 px-4 text-xs whitespace-nowrap">${kalanObj.text}</td>
+                    <td class="py-3 px-4 text-right whitespace-nowrap">
+                        <button onclick="openCarDetail(${car.id})" class="bg-wilo text-white px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-wilo-dark transition shadow-sm inline-flex items-center space-x-1.5" style="white-space:nowrap;">
+                            <i class="fa-solid fa-folder-open"></i><span>Detay &amp; Yönet</span>
                         </button>
                     </td>
                 `;
