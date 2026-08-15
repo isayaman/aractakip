@@ -33,6 +33,16 @@ korunan kurumsal bir araç filo yönetim sistemidir.
   kalın yazı, tüm hücrelerde kenarlık, otomatik filtre, içeriğe göre sütun
   genişliği, Verdana 10pt yazı tipi.
 - Ana ekranda **"İade Süresi Yaklaşan"** kartı eklendi.
+- **Genel Dağılım paneli:** Tahsis tipine ve filoya göre araç dağılımını
+  gösteren, açılır/kapanır bir özet bölüm.
+- **Toplu Araç Yükle (Excel):** Parametre Yönetimi ekranından bir Excel
+  şablonu indirip birden fazla aracı tek seferde içe aktarabilirsiniz.
+  Yüklenen tüm yazılar otomatik BÜYÜK HARF'e çevrilir; Excel'deki yeni
+  marka/filo/bölüm gibi değerler otomatik olarak ilgili parametre listesine
+  eklenir.
+- **Tam Yedek İndir / Geri Yükle:** Parametre Yönetimi ekranından tüm araç
+  verinizi (resim ve dosyalar dahil) tek bir dosya olarak indirip
+  saklayabilir, gerektiğinde geri yükleyebilirsiniz.
 
 ## Klasör yapısı
 
@@ -127,11 +137,20 @@ gösterilir.
 
 ## Önemli notlar
 
-- Render'ın ücretsiz PostgreSQL planı ~90 gün sonra süresi dolabilir; bu
-  durumda yeni bir veritabanı oluşturup `DATABASE_URL` değerini
-  güncellemeniz gerekir. Kalıcı/sınırsız kullanım için Render'ın ücretli
-  veritabanı planına geçebilir veya Neon/Supabase gibi ücretsiz katmanı
-  olan başka bir PostgreSQL sağlayıcısını kullanabilirsiniz.
+- **⚠️ ÖNEMLİ — Render'ın ücretsiz PostgreSQL veritabanı, oluşturulduktan
+  30 GÜN SONRA süresi doluyor**, ardından 14 günlük bir ek süre veriliyor;
+  bu süre içinde ücretli plana geçilmezse **veritabanı ve içindeki TÜM VERİ
+  kalıcı olarak siliniyor** (Render'ın ücretsiz planı hiçbir yedekleme
+  özelliği de sunmuyor). Bunu önlemek için:
+  - Parametre Yönetimi ekranındaki **"Yedek İndir"** özelliğiyle düzenli
+    (örn. haftada bir) tam yedek alıp bilgisayarınızda saklayın, **veya**
+  - Render'ın ücretli veritabanı planına geçin (süre dolması ve veri kaybı
+    riski tamamen ortadan kalkar, gerçek otomatik yedekleme de gelir),
+    **veya**
+  - **Neon** ya da **Supabase** gibi kalıcı/süresiz ücretsiz PostgreSQL
+    sağlayıcılarından birine geçin — kodda hiçbir değişiklik gerekmez,
+    yalnızca Render'daki `DATABASE_URL` ortam değişkenini yeni sağlayıcının
+    bağlantı adresiyle güncellemeniz yeterlidir.
 - Ücretsiz Render web servisleri bir süre kullanılmadığında "uykuya"
   geçebilir; ilk açılan istek birkaç saniye gecikmeli dönebilir.
 - Resim/dosyalar sıkıştırılmış biçimde (base64) veritabanına kaydedilir;
