@@ -71,6 +71,13 @@
    kendi içinde kaydırma (scroll) olur. */
 .modal-content-area{min-height:560px}
 @media (max-width: 640px){.modal-content-area{min-height:0}}
+/* Ana sayfa/header kapsayıcısı: geniş ekranlarda tablo (özellikle çok
+   sütunlu araç listesi) daha fazla yatay alan kullanabilsin diye
+   max-w-7xl (1280px) yerine kademeli olarak genişletildi; küçük ekranlarda
+   (mobil/tablet) önceki gibi tam genişlik + normal kenar boşluğu korunur. */
+.app-container{width:100%; max-width:1280px; margin-left:auto; margin-right:auto;}
+@media (min-width:1280px){.app-container{max-width:96%;}}
+@media (min-width:1600px){.app-container{max-width:1680px;}}
 input:read-only, input[readonly]{background-color:#f3f4f6;color:#6b7280;cursor:not-allowed}
 button:disabled{opacity:.5;cursor:not-allowed}
 .animate-scale{animation:scaleIn .15s ease-out}
@@ -85,7 +92,7 @@ button:disabled{opacity:.5;cursor:not-allowed}
 
     <!-- Header -->
     <header class="bg-wilo text-white shadow-md">
-        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center flex-wrap gap-3">
+        <div class="app-container mx-auto px-3 py-4 flex justify-between items-center flex-wrap gap-3">
             <div class="flex items-center space-x-3">
                 <div class="bg-white text-wilo p-2.5 rounded-lg shadow text-xl w-11 h-11 flex items-center justify-center"><i class="fa-solid fa-car-side"></i></div>
                 <div>
@@ -130,7 +137,7 @@ button:disabled{opacity:.5;cursor:not-allowed}
     </div>
 
     <!-- Main Container -->
-    <main class="max-w-7xl mx-auto px-4 py-6 flex-grow w-full space-y-6">
+    <main class="app-container mx-auto px-3 py-6 flex-grow w-full space-y-6">
 
         <!-- Top Statistics Cards -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
