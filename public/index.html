@@ -183,18 +183,19 @@ button:disabled{opacity:.5;cursor:not-allowed}
                     <span>Göster</span><i class="fa-solid fa-chevron-down text-xs"></i>
                 </span>
             </button>
-            <div id="dagilimPanelContent" class="hidden border-t border-gray-100 p-4">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div id="dagilimPanelContent" class="hidden border-t border-gray-100" style="padding:16px;">
+                <div style="display:grid; grid-template-columns:1fr; gap:24px;" id="dagilimGridWrapper">
                     <div>
-                        <p class="text-xs font-semibold text-gray-500 mb-3">TAHSİS TİPİNE GÖRE</p>
-                        <div id="dagilimTahsisTipi" class="space-y-2"></div>
+                        <p style="font-size:12px; font-weight:700; color:#374151; letter-spacing:0.03em; margin-bottom:12px;">TAHSİS TİPİNE GÖRE</p>
+                        <div id="dagilimTahsisTipi" style="display:flex; flex-direction:column; gap:10px;"></div>
                     </div>
                     <div>
-                        <p class="text-xs font-semibold text-gray-500 mb-3">FİLOYA GÖRE</p>
-                        <div id="dagilimFilo" class="space-y-2"></div>
+                        <p style="font-size:12px; font-weight:700; color:#374151; letter-spacing:0.03em; margin-bottom:12px;">FİLOYA GÖRE</p>
+                        <div id="dagilimFilo" style="display:flex; flex-direction:column; gap:10px;"></div>
                     </div>
                 </div>
             </div>
+            <style>@media (min-width:640px){#dagilimGridWrapper{grid-template-columns:1fr 1fr !important;}}</style>
         </div>
 
         <!-- Filter Tabs & Table Section -->
@@ -965,17 +966,17 @@ button:disabled{opacity:.5;cursor:not-allowed}
             function renderBars(containerId, data) {
                 const container = document.getElementById(containerId);
                 if (data.length === 0) {
-                    container.innerHTML = '<p class="text-xs text-gray-400">Kayıt yok</p>';
+                    container.innerHTML = '<p style="font-size:12px; color:#9ca3af;">Kayıt yok</p>';
                     return;
                 }
                 const max = data[0][1];
                 container.innerHTML = data.map(([label, count]) => `
-                    <div class="flex items-center space-x-3">
-                        <span class="w-24 text-xs text-gray-600 truncate" title="${label}">${label}</span>
-                        <div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
-                            <div class="h-full bg-wilo" style="width:${Math.round(count / max * 100)}%"></div>
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <span style="width:96px; flex-shrink:0; font-size:12px; color:#4b5563; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${label}">${label}</span>
+                        <div style="flex:1 1 auto; height:8px; background:#f3f4f6; border-radius:9999px; overflow:hidden;">
+                            <div style="height:100%; border-radius:9999px; background:#009C82; width:${Math.round(count / max * 100)}%;"></div>
                         </div>
-                        <span class="w-8 text-right text-xs font-semibold text-gray-700">${count}</span>
+                        <span style="width:28px; flex-shrink:0; text-align:right; font-size:12px; font-weight:700; color:#374151;">${count}</span>
                     </div>
                 `).join('');
             }
