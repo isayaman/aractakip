@@ -37,6 +37,8 @@
 .max-w-\[140px\]{max-width:140px}
 .max-w-\[200px\]{max-width:200px}
 .max-w-\[220px\]{max-width:220px}
+.h-2{height:.5rem}
+.w-8{width:2rem}
 .bg-gray-300{background-color:#d1d5db}
 .bg-orange-50{background-color:#fff7ed}
 .bg-orange-100{background-color:#ffedd5}
@@ -167,6 +169,31 @@ button:disabled{opacity:.5;cursor:not-allowed}
                     <p id="statEnYakinDetay" class="text-sm text-gray-500 mt-0.5">Kayıt yok</p>
                 </div>
                 <div class="bg-red-50 text-red-600 p-3 rounded-lg text-xl"><i class="fa-solid fa-clock"></i></div>
+            </div>
+        </div>
+
+        <!-- Genel Dağılım Paneli (açılır/kapanır) -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <button onclick="toggleDagilimPanel()" class="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50 transition">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-chart-pie text-gray-500"></i>
+                    <span class="text-sm font-semibold text-gray-700">Genel Dağılım</span>
+                </div>
+                <span id="dagilimToggleText" class="text-xs text-wilo font-semibold flex items-center space-x-1">
+                    <span>Göster</span><i class="fa-solid fa-chevron-down text-xs"></i>
+                </span>
+            </button>
+            <div id="dagilimPanelContent" class="hidden border-t border-gray-100 p-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div>
+                        <p class="text-xs font-semibold text-gray-500 mb-3">TAHSİS TİPİNE GÖRE</p>
+                        <div id="dagilimTahsisTipi" class="space-y-2"></div>
+                    </div>
+                    <div>
+                        <p class="text-xs font-semibold text-gray-500 mb-3">FİLOYA GÖRE</p>
+                        <div id="dagilimFilo" class="space-y-2"></div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -895,6 +922,66 @@ button:disabled{opacity:.5;cursor:not-allowed}
                 gunEl.innerText = `${Math.abs(en.days)} gün`;
                 detayEl.innerText = `${en.car.plaka} — ${en.car.kullanici || 'Kullanıcı atanmamış'}`;
             }
+
+            refreshDagilimIfVisible();
+        }
+
+        // ==========================================================
+        // GENEL DAĞILIM PANELİ (Tahsis Tipi / Filo bazlı, otomatik hesaplanır)
+        // ==========================================================
+        function toggleDagilimPanel() {
+            const content = document.getElementById('dagilimPanelContent');
+            const toggleText = document.getElementById('dagilimToggleText');
+            const isHidden = content.classList.contains('hidden');
+            if (isHidden) {
+                content.classList.remove('hidden');
+                toggleText.innerHTML = '<span>Gizle</span><i class="fa-solid fa-chevron-up text-xs"></i>';
+                renderDagilimPanel();
+            } else {
+                content.classList.add('hidden');
+                toggleText.innerHTML = '<span>Göster</span><i class="fa-solid fa-chevron-down text-xs"></i>';
+            }
+        }
+
+        function refreshDagilimIfVisible() {
+            const content = document.getElementById('dagilimPanelContent');
+            if (content && !content.classList.contains('hidden')) {
+                renderDagilimPanel();
+            }
+        }
+
+        function renderDagilimPanel() {
+            const aktifCars = carsData.filter(c => c.durum !== 'İade');
+
+            function buildDistribution(field) {
+                const counts = {};
+                aktifCars.forEach(c => {
+                    const val = (c[field] && String(c[field]).trim()) || 'BELİRTİLMEMİŞ';
+                    counts[val] = (counts[val] || 0) + 1;
+                });
+                return Object.entries(counts).sort((a, b) => b[1] - a[1]);
+            }
+
+            function renderBars(containerId, data) {
+                const container = document.getElementById(containerId);
+                if (data.length === 0) {
+                    container.innerHTML = '<p class="text-xs text-gray-400">Kayıt yok</p>';
+                    return;
+                }
+                const max = data[0][1];
+                container.innerHTML = data.map(([label, count]) => `
+                    <div class="flex items-center space-x-3">
+                        <span class="w-24 text-xs text-gray-600 truncate" title="${label}">${label}</span>
+                        <div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                            <div class="h-full bg-wilo" style="width:${Math.round(count / max * 100)}%"></div>
+                        </div>
+                        <span class="w-8 text-right text-xs font-semibold text-gray-700">${count}</span>
+                    </div>
+                `).join('');
+            }
+
+            renderBars('dagilimTahsisTipi', buildDistribution('tahsisTipi'));
+            renderBars('dagilimFilo', buildDistribution('filo'));
         }
 
         function switchTab(tab) {
