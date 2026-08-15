@@ -2026,6 +2026,30 @@ button:disabled{opacity:.5;cursor:not-allowed}
                         warnings.push({ key: `bakim-${car.id}`, kategori: 'Bakım', icon: 'fa-screwdriver-wrench', plaka: car.plaka, carId: car.id, mesaj, seviye: 'uyari' });
                     }
                 }
+
+                // Havuz bazlı ortak bir KM sınırı TANIMLI DEĞİLSE (ör. "TEK
+                // BAŞINA" araçlar, ya da henüz Parametre Yönetimi'nden
+                // limiti girilmemiş bir havuz), aracın kendi bireysel "KM
+                // Sınırı" alanına göre risk kontrolü burada (Uyarılar
+                // panelinde) da yapılır — araç detayındaki analizle birebir
+                // aynı mantık.
+                const carHavuzLimiti = car.havuzTipi ? (paramsData.havuzKmSinirlari ? paramsData.havuzKmSinirlari[car.havuzTipi] : null) : null;
+                if (!carHavuzLimiti && car.kmSiniri && car.donusTarihi && car.kmListesi && car.kmListesi.length > 0) {
+                    const maxKm = Number(car.kmSiniri);
+                    const today = new Date();
+                    const donus = new Date(car.donusTarihi);
+                    const teslim = new Date(car.teslimTarihi || today);
+                    const totalDays = Math.max(1, (donus - teslim) / (1000 * 60 * 60 * 24));
+                    const passedDays = Math.max(1, (today - teslim) / (1000 * 60 * 60 * 24));
+                    const dailyAverageKm = latestKm / passedDays;
+                    const estimatedTotalKmAtEnd = dailyAverageKm * totalDays;
+
+                    if (latestKm > maxKm) {
+                        warnings.push({ key: `kmbireysel-${car.id}`, kategori: 'KM Sınırı', icon: 'fa-gauge-high', plaka: car.plaka, carId: car.id, mesaj: `Araç KM sınırı aşılmıştır! (Güncel: ${latestKm.toLocaleString('tr-TR')} KM / Sınır: ${maxKm.toLocaleString('tr-TR')} KM)`, seviye: 'kritik' });
+                    } else if (estimatedTotalKmAtEnd > maxKm) {
+                        warnings.push({ key: `kmbireysel-${car.id}`, kategori: 'KM Sınırı', icon: 'fa-gauge-high', plaka: car.plaka, carId: car.id, mesaj: `Mevcut kullanım hızıyla (${Math.round(dailyAverageKm)} KM/gün) sözleşme sonuna kadar tahmini ${Math.round(estimatedTotalKmAtEnd).toLocaleString('tr-TR')} KM yapılması bekleniyor. Sınır (${maxKm.toLocaleString('tr-TR')} KM) aşılacak!`, seviye: 'uyari' });
+                    }
+                }
             });
 
             const havuzGruplari = {};
